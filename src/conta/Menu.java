@@ -6,7 +6,7 @@ import java.util.Scanner;
 
 import conta.controller.ContaController;
 import conta.model.ContaCorrente;
-import conta.model.ContaPoupança;
+import conta.model.ContaPoupanca;
 import conta.util.Cores;
 
 public class Menu {
@@ -18,14 +18,14 @@ public class Menu {
 		ContaCorrente cc1 = new ContaCorrente(1, 123, 1, "José da Silva", 0.0f, 1000.0f);
 		cc1.visualizar();
 		cc1.sacar(12000.0f);
-		cc1.visualizar();
+
 		cc1.depositar(5000.0f);
 		cc1.visualizar();
 
-		ContaPoupança cp1 = new ContaPoupança(2, 123, 2, "Maria dos Santos", 100000.0f, 15);
+		ContaPoupanca cp1 = new ContaPoupanca(2, 123, 2, "Maria dos Santos", 100000.0f, 15);
 		cp1.visualizar();
 		cp1.sacar(1000.0f);
-		cp1.visualizar();
+
 		cp1.depositar(5000.0f);
 		cp1.visualizar();
 
@@ -98,8 +98,8 @@ public class Menu {
 					System.out.println("Digite o dia do Aniversario da Conta: ");
 					aniversario = leia.nextInt();
 					contas.cadastrar(
-							new ContaPoupança(contas.gerarNumero(), agencia, tipo, titular, saldo, aniversario));
-					}
+							new ContaPoupanca(contas.gerarNumero(), agencia, tipo, titular, saldo, aniversario));
+				}
 				}
 				keyPress();
 				break;
@@ -109,12 +109,51 @@ public class Menu {
 				keyPress();
 				break;
 			case 3:
-				System.out.println(Cores.TEXT_WHITE + "Consultar dados da Conta - por número\n\n");
+				System.out.println(Cores.TEXT_WHITE + "Buscar Conta por número\n\n");
 
+				System.out.println("Digite o número da conta: ");
+				numero = leia.nextInt();
+
+				contas.procurarPorNumero(numero);
 				keyPress();
 				break;
 			case 4:
 				System.out.println(Cores.TEXT_WHITE + "Atualizar dados da Conta\n\n");
+
+				System.out.println("Digite o número da conta: ");
+				numero = leia.nextInt();
+
+				if (contas.buscarNaCollection(numero) != null) {
+
+					System.out.println("Digite o Numero da Agência: ");
+					agencia = leia.nextInt();
+					System.out.println("Digite o Nome do Titular: ");
+					leia.skip("\\R?");
+					titular = leia.nextLine();
+
+					System.out.println("Digite o Saldo da Conta (R$): ");
+					saldo = leia.nextFloat();
+
+					tipo = contas.retornaTipo(numero);
+
+					switch (tipo) {
+					case 1 -> {
+						System.out.println("Digite o Limite de Crédito (R$): ");
+						limite = leia.nextFloat();
+						contas.atualizar(new ContaCorrente(numero, agencia, tipo, titular, saldo, limite));
+					}
+					case 2 -> {
+						System.out.println("Digite o dia do Aniversario da Conta: ");
+						aniversario = leia.nextInt();
+						contas.atualizar(new ContaPoupanca(numero, agencia, tipo, titular, saldo, aniversario));
+					}
+					default -> {
+						System.out.println("Tipo de conta inválido!");
+					}
+					}
+
+				} else
+					System.out.println("\nConta não encontrada!");
 
 				keyPress();
 				break;
